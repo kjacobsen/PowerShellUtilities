@@ -9,7 +9,7 @@
 @{
 
 # Script module or binary module file associated with this manifest.
-RootModule = '.\PowerShellUtilities.psm1'
+# RootModule = '.\PowerShellUtilities.psm1'
 
 # Version number of this module.
 ModuleVersion = '1.0'
@@ -30,7 +30,7 @@ Copyright = '(c) 2014 Kieran Jacobsen <kieran.jacobsen@outlook.com>. All rights 
 Description = 'Collection of helpful powershell utilitie cmdlets'
 
 # Minimum version of the Windows PowerShell engine required by this module
-PowerShellVersion = '3.0'
+PowerShellVersion = '2.0'
 
 # Name of the Windows PowerShell host required by this module
 # PowerShellHostName = ''
@@ -63,7 +63,7 @@ PowerShellVersion = '3.0'
 # FormatsToProcess = @()
 
 # Modules to import as nested modules of the module specified in RootModule/ModuleToProcess
-# NestedModules = @()
+NestedModules = '.\EnhancedScriptEnvironment.psm1'
 
 # Functions to export from this module
 FunctionsToExport = '*'
