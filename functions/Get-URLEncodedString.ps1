@@ -4,7 +4,7 @@
 # 
 # NAME: 
 # 
-# AUTHOR: kieran.jacobsen@outlook.com , 
+# AUTHOR: code@poshsecurity.com , 
 # DATE  : 26/11/2014
 # 
 # COMMENT: 
