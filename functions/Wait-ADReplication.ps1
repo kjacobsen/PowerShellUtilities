@@ -1,10 +1,22 @@
 ﻿function wait-ADReplication 
 {
     [cmdletbinding()]
+    Param (
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [PSCredential]
+        $Credential,
+
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [int]
+        $Timeout
+
+    )
     $StartTime = Get-Date
     $ExpiryTime = $StartTime.AddMinutes($Timeout)
 
-    $Total = (Get-ADReplicationUpToDatenessVectorTable -Target * -Credential $DomainAdminCredentials | Where-Object  -FilterScript {
+    $Total = (Get-ADReplicationUpToDatenessVectorTable -Target * -Credential $Credential | Where-Object  -FilterScript {
             $_.partner -ne $null
         }
     ).length
@@ -13,7 +25,7 @@
     do 
     {
         $Now = Get-Date
-        $NumberReplicated = @((Get-ADReplicationUpToDatenessVectorTable -Target * -Credential $DomainAdminCredentials | Where-Object  -FilterScript {
+        $NumberReplicated = @((Get-ADReplicationUpToDatenessVectorTable -Target * -Credential $Credential | Where-Object  -FilterScript {
                     ($_.partner -ne $null) -and ($_.LastReplicationSuccess -gt $StartTime)
                 }
         )).length
