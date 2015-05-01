@@ -1,4 +1,4 @@
-﻿function wait-ADReplication 
+﻿function Wait-ADReplication 
 {
     [cmdletbinding()]
     Param (
@@ -11,8 +11,8 @@
         [ValidateNotNullOrEmpty()]
         [int]
         $Timeout
-
     )
+
     $StartTime = Get-Date
     $ExpiryTime = $StartTime.AddMinutes($Timeout)
 
@@ -30,15 +30,18 @@
                 }
         )).length
 
-
         if ($NumberReplicated -lt $Total)
         {
-            Write-Verbose -Message "$NumberReplicated of $Total have replicated"
-            Write-Progress -Activity 'Waiting for AD Replication' -Status Waiting -PercentComplete (100 * $NumberReplicated/$Total) -SecondsRemaining ($ExpiryTime.Subtract($Now).TotalSeconds)
-            Start-Sleep -Seconds 5
+            $Percent = 100 * $NumberReplicated/$Total
+            $TimeRemaining = $ExpiryTime.Subtract($Now).TotalSeconds
+            Write-Verbose -Message "[$Percent] [$TimeRemaining] $NumberReplicated of $Total have replicated"
+            Write-Progress -id 173 -Activity 'Waiting for AD Replication' -Status Waiting -PercentComplete $Percent -SecondsRemaining $TimeRemaining
+            Start-Sleep -Seconds 10
         }
     }
     while (($ExpiryTime -gt $Now) -and ($NumberReplicated -lt $Total))
+
+    Write-Progress -id 173 -Activity 'Waiting for AD Replication' -Status Waiting -Completed 
 
     Write-Verbose -Message "$NumberReplicated of $Total have replicated"
 
@@ -46,6 +49,5 @@
     {
         Write-Error -Message "Not all domain controllers and zones have replicated. $NumberReplicated of $Total have replicated"
     }
-
-    Write-Progress -Activity 'Waiting for AD Replication' -Status Waiting -Completed
+       
 }

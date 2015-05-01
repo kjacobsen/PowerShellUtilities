@@ -10,7 +10,7 @@ $mypath = (Split-Path -parent $MyInvocation.MyCommand.Definition)
 Resolve-Path $mypath\functions\*.ps1 | % { . $_.ProviderPath }
 
 #export as module members the functions we specify
-Export-ModuleMember -Function Invoke-PCommand, Backup-File, Add-FileToRar, update-timestamp, Get-GUID,wait-ADReplication, Start-GuidedSleep 
+Export-ModuleMember -Function Invoke-PCommand, Backup-File, Add-FileToRar, update-timestamp, Get-GUID,wait-ADReplication, Start-GuidedSleep, New-GeneratedPassword
 
 #
 # Define any alias and export them - Kieran Jacobsen

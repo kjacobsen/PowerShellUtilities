@@ -9,7 +9,7 @@ function Start-GuidedSleep
     for ($i = 1; $i -lt $s; $i++) 
     {
         [int]$TimeLeft = $s-$i
-        Write-Progress -Activity "Waiting $s seconds..." -PercentComplete (100/$s*$i) -CurrentOperation "$TimeLeft seconds left ($i elapsed)" -Status 'Please wait'
+        Write-Progress -id 9999 -Activity "Waiting $s seconds..." -PercentComplete (100/$s*$i) -CurrentOperation "$TimeLeft seconds left ($i elapsed)" -Status 'Please wait'
         Start-Sleep -Seconds 1
     }
     Write-Progress -Completed -Activity $true -Status 'Please wait'
