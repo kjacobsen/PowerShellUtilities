@@ -3,8 +3,8 @@ function Start-ADtoAADSync
 {
     [cmdletbinding()]
     Param (
-        [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
+        [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+        [ValidateScript({(Test-WSMan -ComputerName $_ -ErrorAction SilentlyContinue -UseSSL) -ne $null})]
         [String]
         $SyncServer,
 
@@ -17,7 +17,7 @@ function Start-ADtoAADSync
     try
     {
         Write-Verbose -Message 'Forcing AD to AAD Sync'
-        $PSSession = New-PSSession -ComputerName $SyncServer -Credential $Credential
+        $PSSession = New-PSSession -ComputerName $SyncServer -Credential $Credential -UseSSL
         $SyncScript = {Add-PSSnapin -Name Coexistence-Configuration}
         Invoke-Command -Session $PSSession -ScriptBlock $SyncScript
         $null = Import-PSSession -Session $PSSession -CommandName Start-OnlineCoexistenceSync -AllowClobber
