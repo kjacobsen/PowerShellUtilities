@@ -20,8 +20,7 @@
             $_.partner -ne $null
         }
     ).length
-
-
+    
     do 
     {
         $Now = Get-Date
@@ -47,7 +46,7 @@
 
     if ($NumberReplicated -lt $Total)
     {
-        Write-Error -Message "Not all domain controllers and zones have replicated. $NumberReplicated of $Total have replicated"
+        Throw "Not all domain controllers and zones have replicated. $NumberReplicated of $Total have replicated"
     }
        
 }

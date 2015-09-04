@@ -12,5 +12,5 @@ function Start-GuidedSleep
         Write-Progress -id 9999 -Activity "Waiting $s seconds..." -PercentComplete (100/$s*$i) -CurrentOperation "$TimeLeft seconds left ($i elapsed)" -Status 'Please wait'
         Start-Sleep -Seconds 1
     }
-    Write-Progress -Completed -Activity $true -Status 'Please wait'
+    Write-Progress -id 9999 -Completed -Activity $true -Status 'Please wait'
 }
