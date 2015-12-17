@@ -16,18 +16,15 @@
     $StartTime = Get-Date
     $ExpiryTime = $StartTime.AddMinutes($Timeout)
 
-    $Total = (Get-ADReplicationUpToDatenessVectorTable -Target * -Credential $Credential | Where-Object  -FilterScript {
-            $_.partner -ne $null
-        }
-    ).length
+    $ReplicationPartnerData = Get-ADReplicationPartnerMetadata -Target * -Credential $Credential
+
+    $Total = $ReplicationPartnerData.length
     
     do 
     {
         $Now = Get-Date
-        $NumberReplicated = @((Get-ADReplicationUpToDatenessVectorTable -Target * -Credential $Credential | Where-Object  -FilterScript {
-                    ($_.partner -ne $null) -and ($_.LastReplicationSuccess -gt $StartTime)
-                }
-        )).length
+        
+        $NumberReplicated = @(Get-ADReplicationPartnerMetadata -Target * -Credential $Credential -filter {LastReplicationSuccess -gt $StartTime}).length
 
         if ($NumberReplicated -lt $Total)
         {
@@ -35,7 +32,6 @@
             $TimeRemaining = $ExpiryTime.Subtract($Now).TotalSeconds
             Write-Verbose -Message "[$Percent] [$TimeRemaining] $NumberReplicated of $Total have replicated"
             Write-Progress -id 173 -Activity 'Waiting for AD Replication' -Status Waiting -PercentComplete $Percent -SecondsRemaining $TimeRemaining
-            Start-Sleep -Seconds 10
         }
     }
     while (($ExpiryTime -gt $Now) -and ($NumberReplicated -lt $Total))
