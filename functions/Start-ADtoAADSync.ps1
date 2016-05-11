@@ -1,32 +1,52 @@
 ﻿#requires -Version 2
+
 function Start-ADtoAADSync 
 {
     [cmdletbinding()]
     Param (
-        [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
-        [ValidateScript({(Test-WSMan -ComputerName $_ -ErrorAction SilentlyContinue -UseSSL) -ne $null})]
-        [String]
-        $SyncServer,
-
+        # Name of commputer running AAD Connect
         [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
-        [PSCredential]
+        [String]
+        $ComputerName,
+        
+        # Use SSL?
+        [Parameter(Mandatory = $false)]
+        [Switch]
+        $UseSSL,
+        
+        # Administrator credential to establish ps session
+        [Parameter(Mandatory = $false)]
+        [System.Management.Automation.PSCredential]
         $Credential
     )
 
+    Write-Verbose -Message 'Forcing AD to AAD Sync'
+    
+    $SessionParameters = @{
+        ComputerName = $ComputerName
+    }
+
+    if ($PSBoundParameters.ContainsKey('Credential'))
+    {
+        $SessionParameters.Add('Credential', $Credential)
+    }
+    
+    if ($PSBoundParameters.ContainsKey('UseSSL'))
+    {
+        $SessionParameters.Add('UseSSL', $true)
+    }
+
     try
     {
-        Write-Verbose -Message 'Forcing AD to AAD Sync'
-        $PSSession = New-PSSession -ComputerName $SyncServer -Credential $Credential -UseSSL
-        $SyncScript = {Add-PSSnapin -Name Coexistence-Configuration}
-        Invoke-Command -Session $PSSession -ScriptBlock $SyncScript
-        $null = Import-PSSession -Session $PSSession -CommandName Start-OnlineCoexistenceSync -AllowClobber
-        Start-OnlineCoexistenceSync
-        Write-Verbose -Message 'Check the sync server to determine if syncronization is complete'
+        $PSSession = New-PSSession @SessionParameters
+        $null = Import-PSSession -Session $PSSession -CommandName Start-ADSyncSyncCycle -AllowClobber       
+        Start-ADSyncSyncCycle
         Remove-PSSession $PSSession
     }
     catch
     {
         Throw "Error attempting to perform forced directory sync between AD and AAD, $_"
     }
+    
+    Write-Verbose -Message 'Check the sync server to determine if syncronization is complete'
 }
